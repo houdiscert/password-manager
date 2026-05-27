@@ -1,0 +1,63 @@
+@use '../../styles.scss';
+
+h2.login-header {
+    color: var(--solid-text);
+    margin: 0;
+}
+hr {
+    border-color: var(--line-color);
+}
+.form-input {
+    border: 1px solid var(--line-color);
+    padding: 15px;
+    border-radius: 7px;
+    background-color: transparent;
+    outline: none;
+    width: 100%;
+    color: var(--solid-text);
+    font-size: large;
+    &:focus-visible {
+        border-width: 2px;
+        border-color: var(--highlighted-line-color);
+        &::placeholder {
+            opacity: 0;
+        }
+    }
+    &.ng-invalid.ng-touched {
+        border-color: #ff0000;
+    }
+}
+.form-input::placeholder {
+    transition: opacity 0.08s;
+}
+.input-box {
+    width: 60%;
+    margin: auto;
+    margin-top: 25px;
+}
+.input-box label {
+    display: block;
+    float: left;
+    color: var(--default-text);
+    font-weight: 200;
+}
+.form-error {
+    color: #ff0000;
+    float: left;
+    &::before {
+        content: url("/static/invalid.svg");
+        display: block;
+        float: left;
+    }
+}
+
+.signup-button {
+    @include styles.button();
+    padding: 15px;
+    width: 240px;
+    margin-top: 25px;
+    cursor: pointer;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}

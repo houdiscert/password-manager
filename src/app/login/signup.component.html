@@ -1,0 +1,38 @@
+<pm-navbar [pages]="[['Login', 'login'], ['Create Account', 'signup']]" currentPage="signup"/>
+<img src="/static/logo.svg" width="96" height="96" draggable="false"/>
+<h2 class="login-header">Create an account for the Password Manager</h2>
+<hr/>
+<!-- Email Input -->
+<div class="input-box">
+    <label for="email">Email </label>
+    <input type="text" [formControl]="emailControl" id="email" autocomplete="off" class="form-input" placeholder="yourname@example.com"/>
+    @if (emailControl.invalid && emailControl.touched) {
+        <span class="form-error">Invalid email</span>
+    }
+</div>
+<!-- Name Input -->
+<div class="input-box">
+    <label for="name">Name </label>
+    <input type="text" [formControl]="nameControl" id="name" autocomplete="off" class="form-input" placeholder="Houdini"/>
+    @if (nameControl.invalid && nameControl.touched) {
+        <span class="form-error">Name is required</span>
+    }
+</div>
+<!-- Password Input -->
+<div class="input-box">
+    <label for="password">Password </label>
+    <input type="password" [formControl]="passwordControl" id="password" class="form-input" placeholder="V3rySecureP4ssword123"/>
+    @if (passwordControl.invalid && passwordControl.touched) {
+        <span class="form-error">{{(passwordControl.errors ?? {})['usedTheDemo'] ? "Don't use the example password" : "Password should be at least 12 characters"}}</span>
+    }
+</div>
+<!-- Password Confirm Input -->
+<div class="input-box">
+    <label for="confirm-password">Confirm Password </label>
+    <input type="password" [formControl]="confirmPasswordControl" id="confirm-password" class="form-input" placeholder="V3rySecureP4ssword123"/>
+    @if (confirmPasswordControl.invalid && confirmPasswordControl.touched) {
+        <span class="form-error">Passwords must match</span>
+    }
+</div>
+
+<button class="signup-button" (click)="completeSignup()">Create Account</button>

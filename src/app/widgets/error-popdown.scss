@@ -1,0 +1,24 @@
+.error-popdown {
+    color: #ff0000;
+    text-align: center;
+    padding: 15px;
+    border: 1px solid var(--line-color);
+    border-radius: 15px;
+    position: absolute;
+    top: 0;
+}
+.enter {
+    animation: slide-down 0.2s;
+}
+@keyframes slide-down {
+    from {
+        transform: translateY(-30px);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+.error-icon {
+    display: block;
+    float: left;
+}

@@ -1,0 +1,20 @@
+@use '../../styles.scss';
+
+div.navbar-container {
+    border: 1px solid var(--line-color);
+    border-radius: 20px;
+    padding: 10px;
+    display: flex;
+}
+a.navbar-button {
+    @include styles.button();
+    text-decoration: none;
+    flex-grow: 1;
+    margin: 5px;
+    padding: 4px;
+    flex-basis: 50px;
+    border-radius: 8px;
+}
+a.navbar-button.current {
+    background-color: var(--app-theme);
+}
