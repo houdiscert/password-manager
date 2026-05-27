@@ -1,1 +1,153 @@
-/* You can add global styles to this file, and also import other style files */
+// Colors - light mode
+@property --default-text {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #333333;
+}
+@property --button {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #dddddd;
+}
+@property --button-hover {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #eeeeee;
+}
+@property --line-color {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #cccccc;
+}
+@property --highlighted-line-color {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #888888;
+}
+@property --solid-text {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #000000;
+}
+@property --app-theme {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #13D8E6;
+}
+
+body {
+    margin: 0;
+    max-width: 100vw;
+    max-height: 100vh;
+    padding-top: 30px;
+    box-sizing: border-box;
+    overflow: hidden;
+    font-family: "Inter", sans-serif;
+}
+
+// Colors - dark mode
+body.dark {
+    --default-text: #bbbbbb;
+    --button: #222222;
+    --button-hover: #111111;
+    --line-color: #333333;
+    --highlighted-line-color: #777777;
+    --solid-text: #ffffff;
+    --app-theme: #006067;
+
+    background-color: #000000;
+}
+
+// Transitions w/ the mode toggle button
+body.mode-transition {
+    transition: 0.2s;
+    transition-property: --default-text, --button, --button-hover, --line-color, --highlighted-line-color, --solid-text, --app-theme, background-color;
+}
+
+h1, h2, p, span {
+    color: var(--default-text);
+}
+
+@mixin button {
+    background-color: var(--button);
+    transition: background-color 0.2s;
+    border: none;
+    border-radius: 20px;
+    color: var(--default-text);
+    &:hover {
+        background-color: var(--button-hover);
+    }
+}
+a.login-button {
+    @include button();
+    padding: 20px;
+    width: 120px;
+    margin-top: 50px;
+    display: flow-root;
+    margin-left: auto;
+    margin-right: auto;
+    text-decoration: none;
+}
+
+// Footer
+footer {
+    position: absolute;
+    bottom: 0;
+    border-top: 1px solid var(--line-color);
+    width: 100%;
+    box-sizing: border-box;
+    height: 40px;
+    span {
+        vertical-align: middle;
+        margin-left: 10px;
+        @media screen and (width <= 400px) {
+            display: none;
+        }
+    }
+    display: flex;
+    align-items: center;
+}
+.footer-elements {
+    width: 100%;
+}
+
+.main, app-root, :root, body {
+    width: 100%;
+    height: 100%;
+    display: block;
+    position: relative;
+}
+
+// Login Box
+.content-box {
+    margin: auto;
+    width: 80%;
+    height: 90%;
+    border: 1px solid var(--line-color);
+    border-radius: 20px;
+    text-align: center;
+    overflow: scroll;
+}
+
+// Logy
+
+.logo {
+    width: 256px;
+    @media screen and (height <= 400px) {
+        width: 96px;
+    }
+}
+
+.logo-small {
+    width: 96px;
+}
+
+// Main Header
+
+.app-title {
+    background-clip: text;
+    background-image: linear-gradient(to right, #13D8E6, #006067);
+    color: transparent;
+    font-size: 3em;
+    margin-top: 0;
+}
