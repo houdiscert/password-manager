@@ -4,7 +4,7 @@ import { Component, input } from "@angular/core";
     selector: 'pm-error-popdown',
     template: `
         @if (message()) {
-            <div class="error-popdown"><img src="/static/invalid.svg" draggable="false" width="25" height="25" class="error-icon"/><span>{{message()}}</span></div>
+            <div class="error-popdown" animate.enter="enter" animate.leave="leave"><img src="/static/invalid.svg" draggable="false" width="25" height="25" class="error-icon"/><span>{{message()}}</span></div>
         }
     `
 })

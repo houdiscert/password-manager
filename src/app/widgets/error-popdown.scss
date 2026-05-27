@@ -10,12 +10,23 @@
 .enter {
     animation: slide-down 0.2s;
 }
+.leave {
+    animation: fade-out 0.2s;
+}
 @keyframes slide-down {
     from {
         transform: translateY(-30px);
     }
     to {
         transform: translateY(0);
+    }
+}
+@keyframes fade-out {
+    from {
+        opacity: 100%;
+    }
+    to {
+        opacity: 0;
     }
 }
 .error-icon {
