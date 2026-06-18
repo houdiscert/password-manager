@@ -23,7 +23,7 @@ hr {
             opacity: 0;
         }
     }
-    &.ng-invalid.ng-touched {
+    &.ng-invalid.ng-touched, &.ng-pristine.pm-servererror {
         border-color: #ff0000;
     }
 }
@@ -51,7 +51,7 @@ hr {
     }
 }
 
-.signup-button {
+.submit-button {
     @include styles.button();
     padding: 15px;
     width: 240px;
@@ -60,4 +60,9 @@ hr {
     display: block;
     margin-left: auto;
     margin-right: auto;
+}
+.submit-button.waiting {
+    background-color: var(--button-hover);
+    filter: blur(2px);
+    cursor: not-allowed;
 }

@@ -1,0 +1,11 @@
+<div class="modal-overlay" (click)="closeModal()" animate.enter="backdrop-fade-in">
+    <div class="modal-box content-box delete-form" (click)="noBubble($event)" animate.enter="modal-in">
+        <h1>Delete {{target().name}}</h1>
+        <p>Are you sure you wish to delete your {{target().type}} for {{target().name}}?</p>
+        <div class="action-group">
+            <button class="action-button" (click)="closeModal()">Cancel</button>
+            <button class="action-button cancel-button" (click)="deleteItem()">Delete</button>
+        </div>
+    </div>
+</div>
+<pm-error-popdown [message]="errorMessage()"/>

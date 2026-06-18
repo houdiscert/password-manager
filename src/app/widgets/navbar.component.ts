@@ -1,5 +1,6 @@
-import { Component, input } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { RouterLink } from "@angular/router";
+import { Action, NavbarActionMap } from "./navbar-actions";
 
 /**
  * Component displaying a Houdiscert Password Manager navigation bar.
@@ -9,12 +10,17 @@ import { RouterLink } from "@angular/router";
     template: `
         <div class="navbar-container">
             @for (page of pages(); track $index) {
-                <a [routerLink]="'/'+page.route" class="navbar-button" [class.current]="page.route == currentPage()">{{page.title}}</a>
+                @if (page.route | action: actions(); as action) {
+                    <button (click)="action()" class="navbar-button" [class.current]="page.route == currentPage()">{{page.title}}</button>
+                } @else {
+                    <a [routerLink]="'/'+page.route" class="navbar-button" [class.current]="page.route == currentPage()">{{page.title}}</a>
+                }
             }
         </div>
     `,
     styleUrl: './navbar.scss',
-    imports: [RouterLink]
+    imports: [RouterLink, Action],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NavBar {
     /**
@@ -25,6 +31,12 @@ export class NavBar {
      * Route name of the current page. Shown in blue in the navbar
      */
     readonly currentPage = input.required<string>();
+
+    // Non-navigation routes
+    /**
+     * Actions for certain routes to perform instead of being redirects
+     */
+    readonly actions = input<NavbarActionMap>();
 }
 export class Page {
     readonly title: string;

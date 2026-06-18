@@ -1,0 +1,57 @@
+<div class="modal-overlay" (click)="closeModal()" animate.enter="backdrop-fade-in">
+    <div class="modal-box content-box" (click)="noBubble($event)" animate.enter="modal-in">
+        <h1>Add an authentication code</h1>
+        @if (otpSecret(); as otp) {
+            <hr/>
+            <div class="form-group">
+                <!-- URL Input -->
+                <div class="input-box">
+                    <label for="url">Website URL (Optional) </label>
+                    <input type="text" [formControl]="websiteUrlControl" id="url" autocomplete="off" class="form-input"/>
+                    @if (websiteUrlControl.invalid && websiteUrlControl.touched) {
+                        <span class="form-error">Invalid URL</span>
+                    }
+                </div>
+                <!-- Site Name Input -->
+                <div class="input-box">
+                    <label for="site">Code Name </label>
+                    <input type="text" [formControl]="websiteNameControl" id="site" autocomplete="off" maxlength="30" class="form-input"/>
+                    @if (websiteNameControl.invalid && websiteNameControl.touched) {
+                        <span class="form-error">{{websiteNameControl.errors && websiteNameControl.errors['maxlength'] ? "Website Name must be 30 characters or less" : "Website Name is required"}}</span>
+                    }
+                </div>
+            </div>
+            <!-- Submission -->
+            <div class="action-group">
+                <button class="action-button cancel-button" (click)="closeModal()">Cancel</button>
+                <button class="action-button" (click)="saveNewCode()">Add Code</button>
+            </div>
+        } @else {
+            <pm-navbar [pages]="[['Enter otpauth URL or Paste QR', 'pasteqr'], ['Scan QR', 'scanqr']]" [currentPage]="selectedMode()" [actions]="qrModeActions"/>
+            @if (isScanQR()) {
+                <video class="qr-scanner" #qrScanVideo></video>
+                <div class="scanner-overlay" [qrScanner]="qrScanVideo" (scan)="nextPageQRScan($event)"></div>
+            } @else {
+                <!-- otpauth:// URL -->
+                <div class="input-box">
+                    <label for="url">otpauth:// URL </label>
+                    <input type="text" [formControl]="otpauthUrlControl" id="url" autocomplete="off" class="form-input" placeholder="otpauth://totp/mysite:myuser?secret=..."/>
+                    @if (otpauthUrlControl.invalid && otpauthUrlControl.touched) {
+                        <span class="form-error">{{otpauthUrlControl.errors && otpauthUrlControl.errors['otpauth'] ? "Invalid otpauth:// URL" : "otpauth:// URL is required"}}</span>
+                    }
+                </div>
+                <h2 class="add-code-form-or">OR</h2>
+                <div class="paste-qr" (document:paste)="onPasteQR($event)">
+                    <p>Paste a QR code</p>
+                </div>
+            }
+            <div class="action-group">
+                <button class="action-button cancel-button" (click)="closeModal()">Cancel</button>
+                @if (!isScanQR()) {
+                    <button class="action-button" (click)="nextPagePaste()">Next</button>
+                }
+            </div>
+        }
+        <pm-error-popdown [message]="errorMessage()"/>
+    </div>
+</div>

@@ -1,0 +1,33 @@
+<div class="modal-overlay" (click)="closeModal()" animate.enter="backdrop-fade-in">
+    <div class="modal-box content-box" (click)="noBubble($event)" animate.enter="modal-in">
+        <h1>Settings</h1>
+        <hr/>
+        <form>
+            <!-- Session storage options -->
+            <div class="input-box no-mobile-width">
+                <fieldset>
+                    <legend>Session Storage Types</legend>
+                    <p class="setting-desc">
+                        Determines if your session will be stored in session storage (more convenient) or not (slightly more secure).
+                        If your session is not stored in session storage, you will be logged out whenever you refresh the page or in duplicated tabs.
+                        Local storage is the least secure option, but the most convenient as you'll be signed in across all tabs until your session expires.
+                    </p>
+                    <div class="checkbox-row">
+                        <div class="checkbox-option">
+                            <label for="none">No storage</label>
+                            <input type="radio" class="form-checkbox" [(ngModel)]="storageModel" id="none" value="none" name="storage"/>
+                        </div>
+                        <div class="checkbox-option">
+                            <label for="session">Session storage</label>
+                            <input type="radio" class="form-checkbox" [(ngModel)]="storageModel" id="session" value="session" name="storage"/>
+                        </div>
+                        <div class="checkbox-option">
+                            <label for="local">Local storage</label>
+                            <input type="radio" class="form-checkbox" [(ngModel)]="storageModel" id="local" value="local" name="storage"/>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </form>
+    </div>
+</div>

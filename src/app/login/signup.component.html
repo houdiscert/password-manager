@@ -5,9 +5,12 @@
 <!-- Email Input -->
 <div class="input-box">
     <label for="email">Email </label>
-    <input type="text" [formControl]="emailControl" id="email" autocomplete="off" class="form-input" placeholder="yourname@example.com"/>
+    <input type="text" [formControl]="emailControl" [class.pm-servererror]="accExistsError()" id="email" autocomplete="off" class="form-input" placeholder="yourname@example.com"/>
     @if (emailControl.invalid && emailControl.touched) {
         <span class="form-error">Invalid email</span>
+    }
+    @if (emailControl.pristine && accExistsError()) {
+        <span class="form-error">User with that email already exists</span>
     }
 </div>
 <!-- Name Input -->
@@ -35,6 +38,6 @@
     }
 </div>
 
-<button class="signup-button" (click)="completeSignup()">Create Account</button>
+<button class="submit-button" [class.waiting]="submissionWaiting()" (click)="completeSignup()">Create Account</button>
 
 <pm-error-popdown [message]="errorMessage()"/>

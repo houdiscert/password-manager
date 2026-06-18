@@ -1,4 +1,4 @@
-import { afterNextRender, Component, inject, signal } from "@angular/core";
+import { afterNextRender, ChangeDetectionStrategy, Component, inject, signal } from "@angular/core";
 import { SettingsStore } from "../util/app-settings";
 
 @Component({
@@ -6,7 +6,8 @@ import { SettingsStore } from "../util/app-settings";
     template: `
         <button [className]="isDark() ? 'dark-mode-toggle-dark' : 'dark-mode-toggle'" (click)="toggleMode()"></button>
     `,
-    styleUrl: './light-dark.scss'
+    styleUrl: './light-dark.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LightDarkWidget {
     settings = inject(SettingsStore)

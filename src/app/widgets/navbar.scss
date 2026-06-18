@@ -6,7 +6,7 @@ div.navbar-container {
     padding: 10px;
     display: flex;
 }
-a.navbar-button {
+.navbar-button {
     @include styles.button();
     text-decoration: none;
     flex-grow: 1;
@@ -14,7 +14,9 @@ a.navbar-button {
     padding: 4px;
     flex-basis: 50px;
     border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
 }
-a.navbar-button.current {
+.navbar-button.current {
     background-color: var(--app-theme);
 }

@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { RouterLink } from "@angular/router";
 
 @Component({
@@ -8,6 +8,7 @@ import { RouterLink } from "@angular/router";
         <h1 class="app-title">Password Manager</h1>
         <a class="login-button" routerLink="/login">Login</a>
     `,
-    imports: [RouterLink]
+    imports: [RouterLink],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomePage {}

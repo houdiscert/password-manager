@@ -34,6 +34,36 @@
     inherits: true;
     initial-value: #13D8E6;
 }
+@property --app-theme-hover {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #11c2ce;
+}
+@property --solid-color {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #ffffff;
+}
+@property --add-button {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #21cb1e;
+}
+@property --add-button-hover {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #2bdf28;
+}
+@property --light-text {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #666666;
+}
+@property --settings-icon {
+    syntax: "<image>";
+    inherits: true;
+    initial-value: url("/static/settings-light.svg");
+}
 
 body {
     margin: 0;
@@ -54,6 +84,12 @@ body.dark {
     --highlighted-line-color: #777777;
     --solid-text: #ffffff;
     --app-theme: #006067;
+    --app-theme-hover: #00686f;
+    --solid-color: #000000;
+    --add-button: #184f00;
+    --add-button-hover: #144001;
+    --light-text: #bbbbbb;
+    --settings-icon: url("/static/settings-dark.svg");
 
     background-color: #000000;
 }
@@ -61,7 +97,7 @@ body.dark {
 // Transitions w/ the mode toggle button
 body.mode-transition {
     transition: 0.2s;
-    transition-property: --default-text, --button, --button-hover, --line-color, --highlighted-line-color, --solid-text, --app-theme, background-color;
+    transition-property: --default-text, --button, --button-hover, --line-color, --highlighted-line-color, --solid-text, --app-theme, --app-theme-hover, --solid-color, --add-button, --add-button-hover, --light-text, --settings-icon, background-color;
 }
 
 h1, h2, p, span {
@@ -144,10 +180,24 @@ footer {
 
 // Main Header
 
-.app-title {
+@mixin app-theme-text-color {
     background-clip: text;
     background-image: linear-gradient(to right, #13D8E6, #006067);
     color: transparent;
+}
+
+.app-title {
+    @include app-theme-text-color();
     font-size: 3em;
     margin-top: 0;
+}
+
+// This is global and not in password-list.scss because the name is referenced in an angular style binding instead of a compiled class
+@keyframes totp-progress {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0;
+    }
 }

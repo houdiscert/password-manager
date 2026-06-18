@@ -1,13 +1,20 @@
-import { Component, input } from "@angular/core";
+import { AsyncPipe } from "@angular/common";
+import { ChangeDetectionStrategy, Component, computed, input } from "@angular/core";
+import { concat, of, timer } from "rxjs";
 
 @Component({
     selector: 'pm-error-popdown',
     template: `
-        @if (message()) {
-            <div class="error-popdown" animate.enter="enter" animate.leave="leave"><img src="/static/invalid.svg" draggable="false" width="25" height="25" class="error-icon"/><span>{{message()}}</span></div>
+        @if (messageWithExpiry() | async; as msg) {
+            <div class="error-popdown" animate.enter="enter" animate.leave="leave"><img src="/static/invalid.svg" draggable="false" width="25" height="25" class="error-icon"/><span>{{msg}}</span></div>
         }
-    `
+    `,
+    styleUrl: "./error-popdown.scss",
+    imports: [AsyncPipe],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ErrorPopdown {
-    readonly message = input<string>();
+    readonly message = input<string[] | null>(null);
+    readonly showFor = input<number>(5000);
+    readonly messageWithExpiry = computed(() => concat(of(this.message()?.join(", ")), timer(this.showFor())));
 }

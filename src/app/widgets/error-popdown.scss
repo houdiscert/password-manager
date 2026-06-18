@@ -4,8 +4,13 @@
     padding: 15px;
     border: 1px solid var(--line-color);
     border-radius: 15px;
-    position: absolute;
+    position: fixed;
+    margin: auto;
+    background-color: var(--solid-color);
     top: 0;
+    right: 0;
+    width: 200px;
+    z-index: 200;
 }
 .enter {
     animation: slide-down 0.2s;
