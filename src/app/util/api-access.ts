@@ -3,7 +3,7 @@ import { computed, EnvironmentInjector, inject, Injectable, runInInjectionContex
 import * as argon2 from "argon2-browser/dist/argon2-bundled.min.js";
 import { firstValueFrom, map } from "rxjs";
 
-const API = "http://pmapi.houdiscert.com"
+const API = "https://pmapi.houdiscert.com"
 
 export interface AccountRes {
     email: string,
