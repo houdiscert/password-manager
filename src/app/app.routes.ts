@@ -33,4 +33,9 @@ export const routes: Routes = [{
     path: '404',
     loadComponent: async () => (await import('./not-found/not-found.component')).NotFoundPage,
     title: 'Page not Found - Password Manager'
+},
+{
+    path: '**',
+    loadComponent: async () => (await import('./not-found/not-found.component')).NotFoundPage,
+    title: 'Page not Found - Password Manager'
 }];
