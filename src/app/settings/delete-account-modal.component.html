@@ -1,0 +1,19 @@
+<div class="modal-overlay" (click)="closeModal()" animate.enter="backdrop-fade-in">
+    <div class="modal-box content-box delete-account-form" (click)="noBubble($event)" animate.enter="modal-in">
+        <h1>Delete your account</h1>
+        <p>Are you sure you wish to delete your account? Type "delete {{backend.getEmail()() ?? "account"}}" below to confirm:</p>
+        <!-- Confirmation input -->
+        <div class="input-box">
+            <label for="confirm">Confirm deletion</label>
+            <input type="text" [formControl]="deleteConfirmationControl" id="confirm" autocomplete="off" class="form-input"/>
+            @if (deleteConfirmationControl.invalid && deleteConfirmationControl.touched) {
+                <span class="form-error">{{deleteConfirmationControl.errors && deleteConfirmationControl.errors['required'] ? "Confirmation is required" : 'Should contain "delete ' + (backend.getEmail()() ?? "account") + '"'}}</span>
+            }
+        </div>
+        <div class="action-group">
+            <button class="action-button" (click)="closeModal()">Cancel</button>
+            <button class="action-button cancel-button" (click)="deleteAccount()">Delete</button>
+        </div>
+    </div>
+</div>
+<pm-error-popdown [message]="errorMessage()"/>

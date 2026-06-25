@@ -1,0 +1,9 @@
+.action-button.waiting {
+    background-color: var(--button-hover);
+    filter: blur(2px);
+    cursor: not-allowed;
+}
+.session-group {
+    overflow-y: scroll;
+    height: calc(100% - 300px);
+}

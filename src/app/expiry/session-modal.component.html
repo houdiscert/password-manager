@@ -1,0 +1,22 @@
+<div class="modal-overlay" animate.enter="backdrop-fade-in">
+    <div class="modal-box content-box settings-box" animate.enter="modal-in">
+        <h1>Session Expired</h1>
+        <p>Your session has expired! Please log in again.</p>
+        <pm-navbar [pages]="[['Login', 'login'], ['Create Account', 'signup']]" [actions]="sessionModalActions" [currentPage]="currentPage()"/>
+        <div class="session-group">
+            @if (isSignUp()) {
+                <signup-page showNavbar="false" showSignupButton="false" #signupPage routeToPasswords="false"/>
+                <div class="action-group">
+                    <button class="action-button" (click)="doLogout()">Logout</button>
+                    <button class="action-button" (click)="signupPage.completeSignup()" [class.waiting]="signupPage.submissionWaiting()">Create Account</button>
+                </div>
+            } @else {
+                <login-page showNavbar="false" showLoginButton="false" #loginPage routeToPasswords="false"/>
+                    <div class="action-group">
+                    <button class="action-button" (click)="doLogout()">Logout</button>
+                    <button class="action-button" (click)="loginPage.completeLogin()" [class.waiting]="loginPage.submissionWaiting()">Login</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
