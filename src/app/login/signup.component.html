@@ -1,4 +1,6 @@
-<pm-navbar [pages]="[['Login', 'login'], ['Create Account', 'signup']]" currentPage="signup"/>
+@if (showNavbar()) {
+    <pm-navbar [pages]="[['Login', 'login'], ['Create Account', 'signup']]" currentPage="signup"/>
+}
 <img src="/static/logo.svg" width="96" height="96" draggable="false"/>
 <h2 class="login-header">Create an account for the Password Manager</h2>
 <hr/>
@@ -38,6 +40,8 @@
     }
 </div>
 
-<button class="submit-button" [class.waiting]="submissionWaiting()" (click)="completeSignup()">Create Account</button>
+@if (showSignupButton()) {
+    <button class="submit-button" [class.waiting]="submissionWaiting()" (click)="completeSignup()">Create Account</button>
+}
 
 <pm-error-popdown [message]="errorMessage()"/>

@@ -10,12 +10,14 @@ import { ItemCopyButton } from "./item-copy-button.component";
 import { CodeForm } from "./code-form.component";
 import { RefreshTOTPPipe, TOTPRefreshAnimationPipe } from "../util/code-pipes";
 import { SettingsModal } from "../settings/settings.component";
+import { SessionModal } from "../expiry/session-modal.component";
+import { TruncationPipe } from "../util/truncate.pipe";
 
 @Component({
     selector: 'pm-password-list',
     templateUrl: './password-list.component.html',
     styleUrl: './password-list.scss',
-    imports: [NavBar, PasswordForm, DataPipe, AsyncPipe, DeleteForm, ItemCopyButton, CodeForm, RefreshTOTPPipe, TOTPRefreshAnimationPipe, SettingsModal],
+    imports: [NavBar, PasswordForm, DataPipe, AsyncPipe, DeleteForm, ItemCopyButton, CodeForm, RefreshTOTPPipe, TOTPRefreshAnimationPipe, SettingsModal, SessionModal, TruncationPipe],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PasswordList {
@@ -31,7 +33,7 @@ export class PasswordList {
     private readonly data = this.backend.getData();
     readonly addedPasswords = signal<ListedData[]>([]);
     readonly removedPasswords = signal<string[]>([]);
-    readonly passwordsList = computed(() => [...this.data.getData()(), ...this.addedPasswords()].filter(data => data.type === (this.isCodeList ? "code" : "password") && !this.removedPasswords().includes(data.id)));
+    readonly passwordsList = computed(() => [...this.data(), ...this.addedPasswords()].filter(data => data.type === (this.isCodeList ? "code" : "password") && !this.removedPasswords().includes(data.id)));
     readonly shownPasswordsList = signal<string[]>([]);
 
     readonly deletionTarget = signal<DataRes>({id: "", name: "", type: "password", content: ""});
@@ -44,10 +46,14 @@ export class PasswordList {
 
     constructor() {
         afterNextRender({write: () => {
-            this.backend.validateSession(this.hasSession).then(async () => {
-                this.backend.fetchDataInto(this.data);
-            });
+            this.backend.validateSession(this.hasSession);
         }});
+
+        this.backend.onSessionChange(() => {
+            // A session change will reload listed data from the server, so these local lists should be cleared
+            this.addedPasswords.set([]);
+            this.removedPasswords.set([]);
+        });
     }
 
     addPassword() {

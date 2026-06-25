@@ -1,33 +1,82 @@
 <div class="modal-overlay" (click)="closeModal()" animate.enter="backdrop-fade-in">
-    <div class="modal-box content-box" (click)="noBubble($event)" animate.enter="modal-in">
+    <div class="modal-box content-box settings-box" (click)="noBubble($event)" animate.enter="modal-in">
         <h1>Settings</h1>
         <hr/>
-        <form>
-            <!-- Session storage options -->
+        <!-- Session storage options -->
+        <div class="settings-group">
             <div class="input-box no-mobile-width">
-                <fieldset>
+                <fieldset class="input-box-fieldset" [class.setting-updated]="storageChanged()">
                     <legend>Session Storage Types</legend>
                     <p class="setting-desc">
                         Determines if your session will be stored in session storage (more convenient) or not (slightly more secure).
                         If your session is not stored in session storage, you will be logged out whenever you refresh the page or in duplicated tabs.
                         Local storage is the least secure option, but the most convenient as you'll be signed in across all tabs until your session expires.
                     </p>
+                    <p class="setting-desc">
+                        (This setting will only apply upon relogging)
+                    </p>
                     <div class="checkbox-row">
                         <div class="checkbox-option">
                             <label for="none">No storage</label>
-                            <input type="radio" class="form-checkbox" [(ngModel)]="storageModel" id="none" value="none" name="storage"/>
+                            <input type="radio" class="form-checkbox" [formField]="settingsForm.storage" id="none" value="none"/>
                         </div>
                         <div class="checkbox-option">
                             <label for="session">Session storage</label>
-                            <input type="radio" class="form-checkbox" [(ngModel)]="storageModel" id="session" value="session" name="storage"/>
+                            <input type="radio" class="form-checkbox" [formField]="settingsForm.storage" id="session" value="session"/>
                         </div>
                         <div class="checkbox-option">
                             <label for="local">Local storage</label>
-                            <input type="radio" class="form-checkbox" [(ngModel)]="storageModel" id="local" value="local" name="storage"/>
+                            <input type="radio" class="form-checkbox" [formField]="settingsForm.storage" id="local" value="local"/>
                         </div>
                     </div>
                 </fieldset>
             </div>
-        </form>
+            <!-- App theme options -->
+            <div class="input-box no-mobile-width">
+                <fieldset class="input-box-fieldset" [class.setting-updated]="themeChanged()">
+                    <legend>Default App Theme</legend>
+                    <p class="setting-desc">
+                        If you set a default app theme for your account, then that app theme will be automatically set on your browser every time you log in to your account, on any device.
+                    </p>
+                    <div class="checkbox-row">
+                        <div class="checkbox-option">
+                            <label for="none">None</label>
+                            <input type="radio" class="form-checkbox" [formField]="settingsForm.theme" id="none" value="none"/>
+                        </div>
+                        <div class="checkbox-option">
+                            <label for="light">Light</label>
+                            <input type="radio" class="form-checkbox" [formField]="settingsForm.theme" id="light" value="light"/>
+                        </div>
+                        <div class="checkbox-option">
+                            <label for="dark">Dark</label>
+                            <input type="radio" class="form-checkbox" [formField]="settingsForm.theme" id="dark" value="dark"/>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+
+            <!-- Invalidate sessions -->
+            @if (backend.isRemote()) {
+                <p class="space">Immediately logs you out of all sessions that are currently logged in, except for this tab. All sessions will always expire after 1 hour from logging in regardless.</p>
+                <button class="action-button" (click)="invalidateOtherSessions()">Invalidate sessions</button>
+            }
+
+            <!-- Delete account -->
+            <p class="space">Warning: will permanently delete your account and all your passwords/codes!</p>
+            <button class="action-button cancel-button" (click)="showDeleteAccount()">Delete account</button>
+        </div>
+
+        @if (showAccountDeletionModal()) {
+            <pm-delete-account [(show)]="showAccountDeletionModal"/>
+        }
+
+        <!-- Modal action buttons -->
+        <div class="action-group">
+            <button class="action-button" (click)="closeModal()">Close</button>
+            <button class="action-button" (click)="saveSettings()">Save</button>
+        </div>
+
+        <pm-error-popdown [message]="errorMessage()"/>
+        <pm-info-popdown [message]="successMessage()"/>
     </div>
 </div>

@@ -5,6 +5,7 @@ import { Tooltip } from "../widgets/tooltip.component";
 import { AsyncPipe } from "@angular/common";
 import { HoverState } from "../widgets/tooltip-hover";
 import { ErrorPopdown } from "../widgets/error-popdown.component";
+import { TruncationPipe } from "../util/truncate.pipe";
 
 @Component({
     selector: 'item-copy-button',
@@ -15,7 +16,7 @@ import { ErrorPopdown } from "../widgets/error-popdown.component";
                     @let fadeStates = copySuccess() | async | copiedTextFadeStates;
                     @if (fadeStates.showInfo) {
                         <span class="property-name" [class.info-fade-out]="fadeStates.infoFadeOut" [animate.enter]="fadeStates.infoFadeIn && 'info-fade-in'">{{label()}}: </span>
-                        <span [class.info-fade-out]="fadeStates.infoFadeOut" [animate.enter]="fadeStates.infoFadeIn && 'info-fade-in'">{{password()}}</span>
+                        <span [class.info-fade-out]="fadeStates.infoFadeOut" [animate.enter]="fadeStates.infoFadeIn && 'info-fade-in'">{{password() | truncate: 7}}</span>
                     }
                     @else if (fadeStates.showCopyIndicator) {
                         <span class="copy-indicator" animate.enter="indicator-fade-in" animate.leave="indicator-fade-out">Copied!</span>
@@ -28,7 +29,7 @@ import { ErrorPopdown } from "../widgets/error-popdown.component";
         </div>
     `,
     styleUrl: './password-list.scss',
-    imports: [Tooltip, AsyncPipe, CopiedTextFadeStatesPipe, HoverState, ErrorPopdown],
+    imports: [Tooltip, AsyncPipe, CopiedTextFadeStatesPipe, HoverState, ErrorPopdown, TruncationPipe],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ItemCopyButton {

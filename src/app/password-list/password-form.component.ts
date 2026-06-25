@@ -25,6 +25,7 @@ export class PasswordForm implements OnInit {
 
     readonly websiteUrlControl = new FormControl('', [Validators.required, Validators.pattern(/^[a-zA-Z0-9-_+%:;.@#,'()*&$![\]\/~=?]+\.[a-zA-Z0-9-_+%:;.@#,'()*&$![\]\/~=?]{2,}$/)]);
     readonly websiteNameControl = new FormControl('', [Validators.required, Validators.maxLength(30)]);
+    readonly usernameControl = new FormControl('');
     readonly passwordControl = new FormControl('', Validators.required);
 
     private readonly backend = inject(Backend);
@@ -88,7 +89,7 @@ export class PasswordForm implements OnInit {
                 });
             } else {
                 // Save the password
-                this.backend.addNewData("password", this.websiteNameControl.value ?? '', {url: this.websiteUrlControl.value, password: this.passwordControl.value}).then(data => {
+                this.backend.addNewData("password", this.websiteNameControl.value ?? '', {url: this.websiteUrlControl.value, username: this.usernameControl.value ?? undefined, password: this.passwordControl.value}).then(data => {
                     this.addedPasswords.set([...this.addedPasswords(), data]);
                     this.closeModal();
                 }).catch(err => {

@@ -1,4 +1,6 @@
-<pm-navbar [pages]="[['Login', 'login'], ['Create Account', 'signup']]" currentPage="login"/>
+@if (showNavbar()) {
+    <pm-navbar [pages]="[['Login', 'login'], ['Create Account', 'signup']]" currentPage="login"/>
+}
 <img src="/static/logo.svg" width="96" height="96" draggable="false"/>
 <h2 class="login-header">Login to the Password Manager</h2>
 <form [formGroup]="loginForm" (ngSubmit)="completeLogin()">
@@ -19,7 +21,9 @@
         }
     </div>
 
-    <button type="submit" class="submit-button" [class.waiting]="submissionWaiting()">Login</button>
+    @if (showLoginButton()) {
+        <button type="submit" class="submit-button" [class.waiting]="submissionWaiting()">Login</button>
+    }
 </form>
 
 <pm-error-popdown [message]="errorMessage()"/>

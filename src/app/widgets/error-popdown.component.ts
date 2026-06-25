@@ -6,7 +6,7 @@ import { concat, of, timer } from "rxjs";
     selector: 'pm-error-popdown',
     template: `
         @if (messageWithExpiry() | async; as msg) {
-            <div class="error-popdown" animate.enter="enter" animate.leave="leave"><img src="/static/invalid.svg" draggable="false" width="25" height="25" class="error-icon"/><span>{{msg}}</span></div>
+            <div class="error-popdown" animate.enter="enter" animate.leave="leave"><img src="/static/invalid.svg" draggable="false" width="25" height="25" class="icon"/><span>{{msg}}</span></div>
         }
     `,
     styleUrl: "./error-popdown.scss",

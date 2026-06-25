@@ -1,5 +1,4 @@
-.error-popdown {
-    color: #ff0000;
+@mixin popdown {
     text-align: center;
     padding: 15px;
     border: 1px solid var(--line-color);
@@ -11,6 +10,14 @@
     right: 0;
     width: 200px;
     z-index: 200;
+}
+.error-popdown {
+    @include popdown();
+    color: #ff0000;
+}
+.info-popdown {
+    @include popdown();
+    color: var(--default-text);
 }
 .enter {
     animation: slide-down 0.2s;
@@ -34,7 +41,7 @@
         opacity: 0;
     }
 }
-.error-icon {
+.icon {
     display: block;
     float: left;
 }

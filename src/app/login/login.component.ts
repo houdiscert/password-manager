@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from "@angular/core";
+import { booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, inject, input, Output, output, signal } from "@angular/core";
 import { NavBar } from "../widgets/navbar.component";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { ErrorPopdown } from "../widgets/error-popdown.component";
@@ -26,6 +26,14 @@ export class LoginPage {
     private readonly apiAccess = inject(ApiAccess);
     private readonly backend = inject(Backend);
 
+    readonly showNavbar = input(true, {transform: booleanAttribute});
+    readonly showLoginButton = input(true, {transform: booleanAttribute});
+
+    /**
+     * Whether the login page should route the user to the passwords list after logging in
+     */
+    readonly routeToPasswords = input(true, {transform: booleanAttribute});
+
     completeLogin() {
         if (this.submissionWaiting())
             return;
@@ -41,7 +49,7 @@ export class LoginPage {
                 this.backend.loginRemoteUser(res, this.loginForm.controls.password.value ?? '', e => {
                     this.submissionWaiting.set(false);
                     this.errorMessage.set([e]);
-                });
+                }, this.routeToPasswords());
             }, e => {
                 this.submissionWaiting.set(false);
                 this.errorMessage.set([e]);

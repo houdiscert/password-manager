@@ -9,12 +9,14 @@ import { ItemCopyButton } from "./item-copy-button.component";
 import { CodeForm } from "./code-form.component";
 import { RefreshTOTPPipe, TOTPRefreshAnimationPipe } from "../util/code-pipes";
 import { SettingsModal } from "../settings/settings.component";
+import { SessionModal } from "../expiry/session-modal.component";
+import { TruncationPipe } from "../util/truncate.pipe";
 
 @Component({
     selector: 'pm-codes-list',
     templateUrl: './password-list.component.html',
     styleUrl: './password-list.scss',
-    imports: [NavBar, PasswordForm, DataPipe, AsyncPipe, DeleteForm, ItemCopyButton, CodeForm, RefreshTOTPPipe, TOTPRefreshAnimationPipe, SettingsModal],
+    imports: [NavBar, PasswordForm, DataPipe, AsyncPipe, DeleteForm, ItemCopyButton, CodeForm, RefreshTOTPPipe, TOTPRefreshAnimationPipe, SettingsModal, SessionModal, TruncationPipe],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CodesList extends PasswordList {

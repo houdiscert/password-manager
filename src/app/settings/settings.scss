@@ -1,3 +1,21 @@
 .setting-desc {
     text-align: left;
+    margin-left: 10px;
+}
+.input-box-fieldset.setting-updated {
+    border-color: var(--add-button);
+}
+.space {
+    padding-top: 60px;
+}
+.settings-group {
+    overflow-y: scroll;
+    height: calc(100% - 200px);
+}
+.modal-box.settings-box {
+    overflow: hidden;
+}
+.delete-account-form {
+    height: 350px;
+    width: 90%;
 }

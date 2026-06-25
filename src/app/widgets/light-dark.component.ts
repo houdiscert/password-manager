@@ -1,31 +1,29 @@
 import { afterNextRender, ChangeDetectionStrategy, Component, inject, signal } from "@angular/core";
 import { SettingsStore } from "../util/app-settings";
+import { LightDarkInfo } from "./light-dark.service";
 
 @Component({
     selector: 'light-dark',
     template: `
-        <button [className]="isDark() ? 'dark-mode-toggle-dark' : 'dark-mode-toggle'" (click)="toggleMode()"></button>
+        <button [className]="info.isDark() ? 'dark-mode-toggle-dark' : 'dark-mode-toggle'" (click)="toggleMode()" aria-label="toggle light or dark theme"></button>
     `,
     styleUrl: './light-dark.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LightDarkWidget {
     settings = inject(SettingsStore)
-    isDark = signal(this.settings.getSetting("isDark", false));
+    info = inject(LightDarkInfo)
 
     constructor() {
         afterNextRender({write: () => {
-            if (this.isDark()) {
+            if (this.info.isDark()) {
                 document.body.className = "dark";
             }
         }});
     }
 
     toggleMode() {
-        const newMode = !this.isDark();
-        this.isDark.set(newMode);
-        this.settings.setSetting("isDark", newMode);
-
-        document.body.className = (this.isDark() ? "dark " : "") + "mode-transition";
+        const newMode = !this.info.isDark();
+        this.info.setDark(newMode);
     }
 }

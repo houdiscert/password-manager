@@ -1,4 +1,4 @@
-import { assertInInjectionContext, ChangeDetectionStrategy, Component, EnvironmentInjector, inject, runInInjectionContext, signal } from "@angular/core";
+import { assertInInjectionContext, booleanAttribute, ChangeDetectionStrategy, Component, EnvironmentInjector, inject, input, runInInjectionContext, signal } from "@angular/core";
 import { NavBar } from "../widgets/navbar.component";
 import { AbstractControl, FormControl, ReactiveFormsModule, Validators } from "@angular/forms";
 import { ErrorPopdown } from "../widgets/error-popdown.component";
@@ -29,6 +29,14 @@ export class SignupPage {
     readonly accExistsError = signal(false);
     readonly submissionWaiting = signal(false);
 
+    readonly showNavbar = input(true, {transform: booleanAttribute});
+    readonly showSignupButton = input(true, {transform: booleanAttribute});
+
+    /**
+     * Whether the signup page should route the user to the passwords list after creating an account
+     */
+    readonly routeToPasswords = input(true, {transform: booleanAttribute});
+
     completeSignup() {
         if (this.submissionWaiting())
             return;
@@ -56,7 +64,7 @@ export class SignupPage {
                 this.backend.loginRemoteUser(res, password, e => {
                     this.submissionWaiting.set(false);
                     this.errorMessage.set([e]);
-                });
+                }, this.routeToPasswords());
             }, e => {
                 this.submissionWaiting.set(false);
                 // Specific error messages

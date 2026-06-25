@@ -24,13 +24,15 @@ export interface ListedData {
 export interface Setting {
     value: string
 }
+export interface NewSession {
+    token: string
+}
 
 /**
  * APIs for logging into remote accounts, and lower-level APIs for some Backend operations that are specific to remote accounts.
  */
 @Injectable({providedIn: 'root'})
 export class ApiAccess {
-    private readonly environmentInjector = inject(EnvironmentInjector);
     private readonly http = inject(HttpClient);
 
     /**
@@ -103,11 +105,11 @@ export class ApiAccess {
         return firstValueFrom(observable);
     }
 
-    listData(authToken: Signal<string | null>): WritableResource<ListedData[] | undefined> {
-        return httpResource<ListedData[]>(computed(() => {
-            let token = authToken();
-            return {url: token ? API + '/listdata' : 'data:application/json,[]', headers: token ? {'Authorization': 'Bearer ' + token} as Record<string, string> : {}}
-        }));
+    listData(authToken: Signal<string | null>): WritableResource<ListedData[]> {
+        return httpResource<ListedData[]>(() => {
+            const token = authToken();
+            return token ? {url: API + '/listdata', headers: {'Authorization': 'Bearer ' + token}} : undefined;
+        }, {defaultValue: []});
     }
 
     getData(id: string, authToken: string) {
@@ -119,11 +121,33 @@ export class ApiAccess {
         return firstValueFrom(observable.pipe(map(res => undefined)));
     }
 
-    getSettingSignal(authToken: string, name: string): WritableResource<Setting | undefined> {
-        return httpResource<Setting>(() => ({url: API + '/settings/' + name, headers: {'Authorization': 'Bearer ' + authToken}}));
+    getSettingSignal(authToken: Signal<string | null>, name: string): WritableResource<Setting | undefined> {
+        return httpResource<Setting>(() => {
+            const token = authToken();
+            if (token) {
+                return {url: API + '/settings/' + name, headers: {'Authorization': 'Bearer ' + token}};
+            } else {
+                return undefined;
+            }
+        });
     }
 
     getSettingValue(authToken: string, name: string): Promise<Setting> {
         return firstValueFrom(this.http.get<Setting>(API + '/settings/' + name, {headers: {'Authorization': 'Bearer ' + authToken}}));
+    }
+
+    updateSettingValue(authToken: string, name: string, value: string): Promise<void> {
+        const observable = this.http.put(API + '/settings', {name, value}, {headers: {'Authorization': 'Bearer ' + authToken}});
+        return firstValueFrom(observable.pipe(map(() => {})));
+    }
+
+    invalidateSessions(authToken: string): Promise<NewSession> {
+        const observable = this.http.delete<NewSession>(API + "/sessions/invalidate", {headers: {'Authorization': 'Bearer ' + authToken}});
+        return firstValueFrom(observable);
+    }
+
+    deleteAccount(authToken: string): Promise<void> {
+        const observable = this.http.delete(API + "/account/delete", {headers: {'Authorization': 'Bearer ' + authToken}});
+        return firstValueFrom(observable.pipe(map(() => {})));
     }
 }
