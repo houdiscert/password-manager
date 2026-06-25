@@ -28,4 +28,9 @@ export const routes: Routes = [{
     path: 'codes',
     loadComponent: async () => (await import('./password-list/codes-list.component')).CodesList,
     title: "Codes - Password Manager"
+},
+{
+    path: '404',
+    loadComponent: async () => (await import('./not-found/not-found.component')).NotFoundPage,
+    title: 'Page not Found - Password Manager'
 }];

@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "postbuild": "mv dist/password-manager/browser/404/index.html dist/password-manager/browser/404.html && rmdir dist/password-manager/browser/404",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:password-manager": "node dist/password-manager/server/server.mjs"

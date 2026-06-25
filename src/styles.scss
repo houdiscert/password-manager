@@ -114,7 +114,7 @@ h1, h2, p, span {
         background-color: var(--button-hover);
     }
 }
-a.login-button {
+a.homepage-button {
     @include button();
     padding: 20px;
     width: 120px;

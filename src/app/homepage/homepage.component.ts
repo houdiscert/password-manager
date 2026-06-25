@@ -6,7 +6,7 @@ import { RouterLink } from "@angular/router";
     template: `
         <img src="/static/logo.svg" draggable="false" class="logo"/>
         <h1 class="app-title">Password Manager</h1>
-        <a class="login-button" routerLink="/login">Login</a>
+        <a class="homepage-button" routerLink="/login">Login</a>
     `,
     imports: [RouterLink],
     changeDetection: ChangeDetectionStrategy.OnPush
