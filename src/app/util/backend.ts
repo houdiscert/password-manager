@@ -407,32 +407,7 @@ export class Backend {
      * Gets a signal containing a list of the user's data. May be called by a component prior to session validation, in which case the data is simply just automatically populated after session validation.
      */
     getData(): Signal<ListedData[]> {
-        const data = signal<ListedData[]>([]);
-        return computed(() => {
-            if (this.dataSource() == DataSource.API) {
-                const resource = this.apiAccess.listData(this.token);
-                return resource.hasValue() ? resource.value() : [];
-            } else if (this.dataSource() == DataSource.LOCAL) {
-                this.openDBIfExists().then(success => {
-                    if (!success) {
-                        throw Error("Failed to open DB");
-                    }
-                    const transaction = this.localDB!.transaction("data", "readonly");
-                    const dataStore = transaction.objectStore("data");
-                    const req = dataStore.getAllKeys();
-                    req.onsuccess = async () => data.set(await Promise.all(req.result.map(key => {
-                        return new Promise<ListedData>((res, rej) => {
-                            const infoReq = dataStore.get(key);
-                            infoReq.onsuccess = () => res({id: key.toString(), type: infoReq.result.type, name: infoReq.result.name});
-                            infoReq.onerror = () => rej(infoReq.error?.toString());
-                        });
-                    })));
-                });
-                return data();
-            } else {
-                return [];
-            }
-        });
+        return computed(() => this.dataSource() == DataSource.NONE ? [] : this.getDataValidated()());
     }
     /**
      * Fetches a specific piece of the user's data by id. The content of the data is decrypted by this method
@@ -699,6 +674,32 @@ export class Backend {
             }
         }
         return false;
+    }
+    private getDataValidated(): Signal<ListedData[]> {
+        if (this.dataSource() == DataSource.API) {
+            const resource = this.apiAccess.listData(this.token);
+            return computed(() => resource.hasValue() ? resource.value() : []);
+        } else if (this.dataSource() == DataSource.LOCAL) {
+            const data = signal<ListedData[]>([]);
+            this.openDBIfExists().then(success => {
+                if (!success) {
+                    throw Error("Failed to open DB");
+                }
+                const transaction = this.localDB!.transaction("data", "readonly");
+                const dataStore = transaction.objectStore("data");
+                const req = dataStore.getAllKeys();
+                req.onsuccess = async () => data.set(await Promise.all(req.result.map(key => {
+                    return new Promise<ListedData>((res, rej) => {
+                        const infoReq = dataStore.get(key);
+                        infoReq.onsuccess = () => res({id: key.toString(), type: infoReq.result.type, name: infoReq.result.name});
+                        infoReq.onerror = () => rej(infoReq.error?.toString());
+                    });
+                })));
+            });
+            return data;
+        } else {
+            throw Error("Invalid data source");
+        }
     }
 
     // HTTP interceptors
