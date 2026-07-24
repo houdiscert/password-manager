@@ -1,0 +1,45 @@
+<pm-navbar [pages]="[['Login', 'login'], ['Create Account', 'signup'], ['Local Session', 'local']]" currentPage="local"/>
+<img src="/static/logo.svg" width="96" height="96" draggable="false"/>
+@if (hasExisting.hasValue()) {
+    @if (hasExisting.value()) {
+        <h2 class="login-header">Use a Local Session</h2>
+        <form [formRoot]="sessionForm">
+            <div class="input-box">
+                <label for="password">Enter Local Password </label>
+                <input type="password" [formField]="sessionForm.localPassword" id="password" autocomplete="off" class="form-input" [class.pm-servererror]="sessionForm.localPassword().invalid() && sessionForm.localPassword().dirty()"/>
+                @if (sessionForm.localPassword().invalid() && sessionForm.localPassword().dirty()) {
+                    <span class="form-error">{{sessionForm.localPassword().errors()[0].message}}</span>
+                } @else if (sessionForm.localPassword().pending()) {
+                    <span class="form-info">Checking local password...</span>
+                }
+            </div>
+            <button type="submit" class="submit-button" [class.invalid]="sessionForm().invalid() || sessionForm().pending()" [class.waiting]="sessionForm().submitting()">Login</button>
+            <hr/>
+            <p>Forgot your password?</p>
+            <button type="button" class="submit-button delete-data" (click)="showDeleteModal.set(true)">Delete Local Data</button>
+        </form>
+        @if (showDeleteModal()) {
+            <pm-delete-account [(show)]="showDeleteModal"/>
+        }
+    } @else {
+        <h2 class="login-header">Create a Local Session</h2>
+        <form [formRoot]="sessionForm">
+            <div class="input-box">
+                <label for="password">Create Local Password </label>
+                <input type="password" [formField]="sessionForm.localPassword" id="password" autocomplete="off" class="form-input ng-pristine" [class.pm-servererror]="sessionForm.localPassword().invalid() && sessionForm.localPassword().touched()"/>
+                @if (sessionForm.localPassword().invalid() && sessionForm.localPassword().touched()) {
+                    <span class="form-error">{{sessionForm.localPassword().errors()[0].message}}</span>
+                }
+            </div>
+            <div class="input-box">
+                <label for="confirm-password">Confirm Password </label>
+                <input type="password" [formField]="sessionForm.confirmPassword" id="confirm-password" autocomplete="off" class="form-input ng-pristine" [class.pm-servererror]="sessionForm.confirmPassword().invalid() && sessionForm.confirmPassword().touched()"/>
+                @if (sessionForm.confirmPassword().invalid() && sessionForm.confirmPassword().touched()) {
+                    <span class="form-error">{{sessionForm.confirmPassword().errors()[0].message}}</span>
+                }
+            </div>
+            <button type="submit" class="submit-button" [class.invalid]="sessionForm().invalid()" [class.waiting]="sessionForm().submitting()">Create Local Session</button>
+        </form>
+    }
+    <pm-error-popdown [message]="errorMessage()"/>
+}

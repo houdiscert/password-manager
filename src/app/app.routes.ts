@@ -3,6 +3,7 @@ import { AppComponent } from './app.component';
 import { LoginPage } from './login/login.component';
 import { HomePage } from './homepage/homepage.component';
 import { SignupPage } from './login/signup.component';
+import { LocalSession } from './login/local-session.component';
 
 export const routes: Routes = [{
     path: '',
@@ -28,6 +29,11 @@ export const routes: Routes = [{
     path: 'codes',
     loadComponent: async () => (await import('./password-list/codes-list.component')).CodesList,
     title: "Codes - Password Manager"
+},
+{
+    path: 'local',
+    component: LocalSession,
+    title: "Use Local Session - Password Manager"
 },
 {
     path: '404',

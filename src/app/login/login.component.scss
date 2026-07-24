@@ -50,6 +50,15 @@ hr {
         float: left;
     }
 }
+.form-info {
+    color: var(--default-text);
+    float: left;
+    &::before {
+        content: url("/static/info.svg");
+        display: block;
+        float: left;
+    }
+}
 
 .submit-button {
     @include styles.button();
@@ -60,9 +69,20 @@ hr {
     display: block;
     margin-left: auto;
     margin-right: auto;
+    &.delete-data {
+        background-color: #ff0000;
+        &.delete-data:hover {
+            background-color: #dc0000;
+        }
+    }
 }
 .submit-button.waiting {
     background-color: var(--button-hover);
     filter: blur(2px);
+    cursor: not-allowed;
+}
+.submit-button.invalid {
+    background-color: var(--button-hover);
+    opacity: 50%;
     cursor: not-allowed;
 }

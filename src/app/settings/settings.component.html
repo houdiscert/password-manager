@@ -10,7 +10,9 @@
                     <p class="setting-desc">
                         Determines if your session will be stored in session storage (more convenient) or not (slightly more secure).
                         If your session is not stored in session storage, you will be logged out whenever you refresh the page or in duplicated tabs.
-                        Local storage is the least secure option, but the most convenient as you'll be signed in across all tabs until your session expires.
+                        @if (backend.isRemote()) {
+                            Local storage is the least secure option, but the most convenient as you'll be signed in across all tabs until your session expires.
+                        }
                     </p>
                     <p class="setting-desc">
                         (This setting will only apply upon relogging)
@@ -24,10 +26,12 @@
                             <label for="session">Session storage</label>
                             <input type="radio" class="form-checkbox" [formField]="settingsForm.storage" id="session" value="session"/>
                         </div>
-                        <div class="checkbox-option">
-                            <label for="local">Local storage</label>
-                            <input type="radio" class="form-checkbox" [formField]="settingsForm.storage" id="local" value="local"/>
-                        </div>
+                        @if (backend.isRemote()) {
+                            <div class="checkbox-option">
+                                <label for="local">Local storage</label>
+                                <input type="radio" class="form-checkbox" [formField]="settingsForm.storage" id="local" value="local"/>
+                            </div>
+                        }
                     </div>
                 </fieldset>
             </div>
@@ -36,7 +40,7 @@
                 <fieldset class="input-box-fieldset" [class.setting-updated]="themeChanged()">
                     <legend>Default App Theme</legend>
                     <p class="setting-desc">
-                        If you set a default app theme for your account, then that app theme will be automatically set on your browser every time you log in to your account, on any device.
+                        If you set a default app theme for your account, then that app theme will be automatically set on your browser every time you log in to your account{{backend.isRemote() ? ", on any device." : "."}}
                     </p>
                     <div class="checkbox-row">
                         <div class="checkbox-option">

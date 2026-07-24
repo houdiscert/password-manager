@@ -42,6 +42,7 @@ export class PasswordForm implements OnInit {
         if (data) {
             this.websiteUrlControl.setValue(data.content.url);
             this.websiteNameControl.setValue(data.name);
+            this.usernameControl.setValue(data.content.username ?? '')
             this.passwordControl.setValue(data.content.password);
         }
     }
@@ -80,7 +81,7 @@ export class PasswordForm implements OnInit {
             const existingData = this.editingPassword();
             if (existingData) {
                 // Edit the password
-                this.backend.editData(existingData.id, this.websiteNameControl.value ?? '', {url: this.websiteUrlControl.value, password: this.passwordControl.value}).then(data => {
+                this.backend.editData(existingData.id, this.websiteNameControl.value ?? '', {url: this.websiteUrlControl.value, username: this.usernameControl.value ?? undefined, password: this.passwordControl.value}).then(data => {
                     this.addedPasswords.set(this.addedPasswords().map(listedData => listedData.id === data.id ? data : listedData));
                     this.passwordEdited.emit(data.id);
                     this.closeModal();

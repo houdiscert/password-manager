@@ -166,9 +166,7 @@ export class Backend {
                         // db is being created
                         req.result.createObjectStore("data", {autoIncrement: true});
                         const settingsStore = req.result.createObjectStore("settings", {keyPath: "name"});
-                        settingsStore.transaction.addEventListener('complete', () => {
-                            settingsStore.add({name: "localpass", value: userSanityHash.encoded}); // Store the password
-                        });
+                        settingsStore.add({name: "localpass", value: userSanityHash.encoded}); // Store the password
                     }
                 });
                 req.addEventListener('success', () => {
@@ -214,6 +212,8 @@ export class Backend {
                 const settingsStore = transaction.objectStore("settings");
                 const req = settingsStore.get("localpass");
                 req.onsuccess = () => {
+                    if (!req.result)
+                        {rej(new Error("failed to fetch local password"));return;}
                     argon2.verify({
                         encoded: req.result.value,
                         pass: password,
@@ -328,7 +328,11 @@ export class Backend {
                 const transaction = this.localDB!.transaction("data", "readwrite");
                 const dataStore = transaction.objectStore("data");
                 const req = dataStore.add({type, name, encryptedContent});
-                req.onsuccess = () => res({id: req.result.toString(), type: type, name: name, content: encryptedContent});
+                req.onsuccess = () => {
+                    if (!req.result)
+                        {rej(new Error("failed to add data"));return;}
+                    res({id: req.result.toString(), type: type, name: name, content: encryptedContent})
+                };
                 req.onerror = () => rej({error: {error: req.error?.toString()}});
             });
         } {
@@ -354,8 +358,10 @@ export class Backend {
                 const key = parseInt(id);
                 const readReq = dataStore.get(key);
                 readReq.onsuccess = () => {
+                    if (!readReq.result)
+                        {rej(new Error("failed to fetch data to edit"));return;}
                     const type = readReq.result.type;
-                    const req = dataStore.add({type, name, encryptedContent}, key);
+                    const req = dataStore.put({type, name, encryptedContent}, key);
                     req.onsuccess = () => res({id: req.result.toString(), type: type, name: name, content: encryptedContent});
                     req.onerror = () => rej({error: {error: req.error?.toString()}});
                 };
@@ -379,7 +385,7 @@ export class Backend {
         } else if (this.dataSource() == DataSource.LOCAL) {
             return new Promise<void>((res, rej) => {
                 this.openDBIfExists().then(() => {
-                    const transaction = this.localDB!.transaction("data");
+                    const transaction = this.localDB!.transaction("data", "readwrite");
                     const dataStore = transaction.objectStore("data");
                     const req = dataStore.delete(parseInt(id));
                     req.onsuccess = () => res();
@@ -408,11 +414,10 @@ export class Backend {
      */
     getData(): Signal<ListedData[]> {
         const resource = this.apiAccess.listData(this.token);
-        return computed(() => {
+        const res = linkedSignal(() => {
             if (this.dataSource() == DataSource.API) {
                 return resource.hasValue() ? resource.value() : [];
             } else if (this.dataSource() == DataSource.LOCAL) {
-                const data = signal<ListedData[]>([]);
                 this.openDBIfExists().then(success => {
                     if (!success) {
                         throw Error("Failed to open DB");
@@ -420,19 +425,24 @@ export class Backend {
                     const transaction = this.localDB!.transaction("data", "readonly");
                     const dataStore = transaction.objectStore("data");
                     const req = dataStore.getAllKeys();
-                    req.onsuccess = async () => data.set(await Promise.all(req.result.map(key => {
+                    req.onsuccess = async () => res.set(await Promise.all(req.result.map(key => {
                         return new Promise<ListedData>((res, rej) => {
                             const infoReq = dataStore.get(key);
-                            infoReq.onsuccess = () => res({id: key.toString(), type: infoReq.result.type, name: infoReq.result.name});
+                            infoReq.onsuccess = () => {
+                                if (!infoReq.result)
+                                    {rej(new Error("failed to fetch a piece of data"));return;}
+                                res({id: key.toString(), type: infoReq.result.type, name: infoReq.result.name})
+                            };
                             infoReq.onerror = () => rej(infoReq.error?.toString());
                         });
                     })));
                 });
-                return data();
+                return [];
             } else {
                 return [];
             }
         });
+        return res.asReadonly();
     }
     /**
      * Fetches a specific piece of the user's data by id. The content of the data is decrypted by this method
@@ -514,7 +524,11 @@ export class Backend {
                 const transaction = this.localDB!.transaction("settings", "readonly");
                 const settingStore = transaction.objectStore("settings");
                 const req = settingStore.get(name);
-                req.onsuccess = () => valueSignal.set({value: req.result.value});
+                req.onsuccess = () => {
+                    if (!req.result)
+                        {errorSignal.set("failed to fetch settings");return;};
+                    valueSignal.set({value: req.result.value})
+                };
                 req.onerror = () => errorSignal.set(req.error?.toString());
             });
             return {[name + "Value"]: valueSignal, [name + "Error"]: errorSignal.asReadonly()} as SettingSignals<TName, TDefault>;
@@ -544,7 +558,11 @@ export class Backend {
                     const transaction = this.localDB!.transaction("settings", "readonly");
                     const settingStore = transaction.objectStore("settings");
                     const req = settingStore.get(name);
-                    req.onsuccess = () => res({value: req.result.value});
+                    req.onsuccess = () => {
+                        if (!req.result)
+                            {rej(new Error("failed to fetch setting"));return;}
+                        res({value: req.result.value})
+                    };
                     req.onerror = () => rej(req.error?.toString());
                 });
             });
@@ -599,7 +617,7 @@ export class Backend {
             return await new Promise<void>((res, rej) => {
                 const transaction = this.localDB!.transaction("settings", "readwrite");
                 const settingStore = transaction.objectStore("settings");
-                const req = settingStore.put(newValue, name);
+                const req = settingStore.put({name, value: newValue});
                 req.onsuccess = () => res();
                 req.onerror = () => rej(req.error?.toString());
             });
@@ -632,13 +650,45 @@ export class Backend {
             } catch (e: any) {
                 throw this.processError(e);
             }
-        } else if (this.dataSource() == DataSource.LOCAL) {
-            return await new Promise<void>((res, rej) => {
-                const req = indexedDB.deleteDatabase("localPasswords");
-                req.onsuccess = () => res();
-                req.onerror = () => rej(req.error?.toString());
-            });
+        } else if (this.dataSource() == DataSource.LOCAL || this.dataSource() == DataSource.NONE) {
+            await this.deleteLocalAccount();
         }
+    }
+
+    /**
+     * Permanently deletes the brower's local account and all associated data **forever**, with absolutely no way to undo the operation. Does not require a validated session to be called. If an error occurs, the returned promise is rejected with a string containing the error message.
+     */
+    async deleteLocalAccount() {
+        return await new Promise<void>((res, rej) => {
+            if (this.localDB)
+                this.localDB.close(); // Or else it will hang forever
+            const req = indexedDB.deleteDatabase("localPasswords");
+            req.onsuccess = () => res();
+            req.onerror = () => rej(req.error?.toString());
+        });
+    }
+
+    /**
+     * Opens and assigns this.localDB if it exists and has the right version. The database can only be created or updated by loginLocalUser(), however
+     */
+    async openDBIfExists(): Promise<boolean> {
+        if (this.localDB) {
+            return true; // already open :D
+        }
+        const databases = await indexedDB.databases();
+        for (const db of databases) {
+            if (db.name === "localPasswords" && db.version === LOCAL_DB_VERSION) {
+                return await new Promise<boolean>((res, rej) => {
+                    const req = indexedDB.open("localPasswords", LOCAL_DB_VERSION);
+                    req.onsuccess = () => {
+                        this.localDB = req.result;
+                        res(true)
+                    };
+                    req.onerror = () => rej(req.error);
+                });
+            }
+        }
+        return false;
     }
 
     // Private helpers
@@ -680,25 +730,6 @@ export class Backend {
                 this.appTheme.setDark(true);
             }
         } catch (e) {}
-    }
-    /**
-     * Opens and assigns this.localDB if it exists and has the right version. The database can only be created or updated by loginLocalUser(), however
-     */
-    private async openDBIfExists(): Promise<boolean> {
-        if (this.localDB) {
-            return true; // already open :D
-        }
-        const databases = await indexedDB.databases();
-        for (const db of databases) {
-            if (db.name === "localPasswords" && db.version === LOCAL_DB_VERSION) {
-                return await new Promise<boolean>((res, rej) => {
-                    const req = indexedDB.open("localPasswords", LOCAL_DB_VERSION);
-                    req.onsuccess = () => res(true);
-                    req.onerror = () => rej(req.error);
-                });
-            }
-        }
-        return false;
     }
 
     // HTTP interceptors
