@@ -1,4 +1,8 @@
-# PasswordManager
+# Houdiscert Password Manager Frontend
+This is the frontend for the Houdiscert Package Manager. Currently the backend is still under review and preparation to be made public. You can currently access the Houdiscert Password Manager at <https://pm.houdiscert.com>.
+
+# Default Angular Thing
+> I'm keeping this here for now because why not</sub>
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.26.
 
